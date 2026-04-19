@@ -2,6 +2,12 @@
 
 All notable changes to Keylight are documented in this file.
 
+## [0.3.1] - 2026-04-19
+
+### Added
+
+- Full platform xcframework via CI: tvOS, watchOS, and visionOS (device + simulator) in addition to iOS and macOS. No API changes from 0.3.0.
+
 ## [0.3.0] - 2026-04-19
 
 ### Platform support

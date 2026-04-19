@@ -2,7 +2,11 @@
 
 All notable changes to Keylight are documented in this file.
 
-## 0.3.0 — Unreleased
+## [0.3.0] - 2026-04-19
+
+### Platform support
+
+Prebuilt xcframework covers **iOS (device + simulator) and macOS** only. Full platform matrix (tvOS, watchOS, visionOS) ships in 0.3.1 via CI.
 
 ### Breaking
 

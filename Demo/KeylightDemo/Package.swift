@@ -5,7 +5,7 @@ let package = Package(
     name: "MinimalKeylightExample",
     platforms: [.macOS(.v13)],
     dependencies: [
-        .package(url: "https://github.com/Halloweedev/keylight-swift.git", exact: "0.3.0"),
+        .package(url: "https://github.com/Halloweedev/keylight-swift.git", exact: "0.3.2"),
     ],
     targets: [
         .executableTarget(

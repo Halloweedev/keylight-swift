@@ -2,6 +2,27 @@
 
 All notable changes to Keylight are documented in this file.
 
+## [0.8.2] - 2026-07-09 — privacy-safe machine identity for free-tier analytics
+
+The anonymous keyless/free-tier beacon now reports a one-way machine hash, so
+your Keylight dashboard counts one device per physical machine instead of one
+per install — reinstalling your app on the same Mac (or iPhone/iPad) updates the
+same free-tier row instead of creating a duplicate. Automatic; the raw device
+identifier never leaves the device, and there are no API changes.
+
+### Added
+
+- The keyless beacon now sends a `machine_hash`: a SHA-256 of a platform-stable
+  device identifier (`IOPlatformUUID` on macOS, `identifierForVendor` on
+  iOS/tvOS/watchOS/visionOS), namespaced to your tenant and product. Only the
+  hash is transmitted — never the raw identifier. When no stable identifier is
+  available the field is omitted and the SDK keeps using its per-install id.
+  The derivation is byte-for-byte identical to the Rust and JS SDKs.
+
+### Changed
+
+- `KeylightProvider.sdkVersion` is now `"0.8.2"`.
+
 ## [0.8.1] - 2026-06-10 — version telemetry (app, SDK, platform)
 
 The SDK now attaches lightweight, anonymous version telemetry to its network

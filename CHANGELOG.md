@@ -2,6 +2,60 @@
 
 All notable changes to Keylight are documented in this file.
 
+## [0.8.4] - 2026-07-29 — a revocation the client can't parse is no longer ignored
+
+A single reliability fix, on the path that matters most: a license you revoke
+from the dashboard now stops working even when the rejection arrives in a shape
+the client can't read. Automatic — no API changes.
+
+### Fixed
+
+- **A definitive rejection whose body doesn't decode now denies.** When a
+  validation was rejected, `validateLicense()` surfaced only
+  `KeylightError.clientError`; any other decoding failure escaped as an untyped
+  error, which the manager treats as a network blip and responds to by keeping
+  the current state. A server rejection the client couldn't parse was therefore
+  indistinguishable from being offline, and the license stayed active. Any
+  rejection the server states definitively now denies, whether or not its body
+  can be read.
+
+  A genuine transport failure (timeout, offline, 5xx) still preserves
+  last-known-good state, bounded as always by `maxOfflineDays` — a network blip
+  must never downgrade a live session.
+
+### Changed
+
+- `KeylightProvider.sdkVersion` is now `"0.8.4"`.
+
+## [0.8.3] - 2026-07-17 — unified device identity + refresh reliability
+
+*Backfilled: 0.8.3 shipped without a changelog entry.*
+
+### Added
+
+- `machine_hash` is now attached to activate and validate, matching the keyless
+  beacon. A device that converts from free tier to paid counts as one device in
+  your dashboard rather than two. Only the one-way hash is transmitted, never the
+  raw identifier, and the derivation stays byte-for-byte identical to the Rust
+  and JS SDKs.
+
+### Fixed
+
+- **A long-unused install no longer expires itself.** Only backward clock
+  movement beyond tolerance counts as clock manipulation. A large *forward* gap —
+  the normal signature of an app that hasn't been opened in months — was treated
+  as tampering and could falsely expire a valid license.
+- **The lease refresh scheduler re-arms itself.** It could stop silently after a
+  refresh, leaving a long-running app without scheduled revalidation until
+  relaunch. It now loops.
+- **The keyless beacon's 24-hour debounce is recorded only on success (HTTP
+  200).** A failed beacon previously consumed the window, so one failure could
+  suppress free-tier reporting for a full day.
+
+### Changed
+
+- `KeylightProvider.sdkVersion` is now `"0.8.3"`.
+
 ## [0.8.2] - 2026-07-09 — privacy-safe machine identity for free-tier analytics
 
 The anonymous keyless/free-tier beacon now reports a one-way machine hash, so

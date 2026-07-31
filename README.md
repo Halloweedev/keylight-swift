@@ -45,13 +45,13 @@ Licensing shouldn't mean bolting a heavyweight, phone-home-or-die SDK onto your 
 
 Add the package in Xcode via **File → Add Package Dependencies** with URL:
 
-`https://github.com/Halloweedev/keylight-swift.git`
+`https://github.com/keylight-dev/keylight-swift.git`
 
 Or in `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/Halloweedev/keylight-swift.git", from: "0.6.0"),
+    .package(url: "https://github.com/keylight-dev/keylight-swift.git", from: "0.8.4"),
 ],
 targets: [
     .target(

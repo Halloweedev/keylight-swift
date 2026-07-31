@@ -10,6 +10,21 @@ If you're building a paid Mac or iOS app and don't want to write a licensing
 backend, this is the drop-in client. The licensing service is
 [keylight.dev](https://keylight.dev).
 
+## Why Keylight
+
+Licensing shouldn't mean bolting a heavyweight, phone-home-or-die SDK onto your app.
+
+- **Works offline.** The license is a signed lease your app verifies locally with Ed25519 — no
+  network round-trip to gate a feature, no lockout when the machine is offline.
+- **Tamper-resistant by design.** Entitlements live *inside* the signature; a forged or
+  hand-edited lease can't pass verification without the tenant's private key.
+- **Apple-native by design.** A focused Swift SDK for macOS and iOS, not a general REST client
+  retrofitted onto Apple platforms.
+- **SwiftUI-ready.** `LicenseManager` is an `ObservableObject` — gate a view on `isEntitled` with
+  a plain `@EnvironmentObject` check, no bridging layer.
+- **Device-bound encrypted storage by default.** License and trial state are sealed into an
+  encrypted file tied to the device — no Keychain popup on first launch.
+
 ## Features
 
 - **License keys** — signed [Ed25519 leases](https://keylight.dev/blog/ed25519-lease-format-explained), generated on payment, verified offline.
@@ -129,6 +144,25 @@ each fits.
 - Website: [keylight.dev](https://keylight.dev)
 - Documentation: [docs.keylight.dev](https://docs.keylight.dev)
 - Pricing: [keylight.dev/pricing](https://keylight.dev/pricing)
+
+## About Keylight
+
+Keylight is the licensing layer for desktop apps. You keep your own Stripe account,
+your own pricing, and your own customers — Keylight issues the licenses and tells your
+app who is allowed to run it.
+
+- **License keys** issued automatically when a payment completes
+- **Device activations** with limits you set, and self-serve deactivation
+- **Offline validation** — signed Ed25519 leases your app verifies locally
+- **Feature entitlements** signed into the lease, so tiers work offline too
+
+[keylight.dev](https://keylight.dev) · [Documentation](https://docs.keylight.dev) · [Pricing](https://keylight.dev/pricing)
+
+### Further reading
+
+- [How to Add License Keys to a Swift macOS App](https://keylight.dev/blog/add-license-keys-swift-macos-app)
+- [License Verification at App Launch: A Swift Walkthrough](https://keylight.dev/blog/license-verification-app-launch-swift)
+- [Where to Store License Data on macOS](https://keylight.dev/blog/where-to-store-license-data-macos)
 
 ## Changelog
 

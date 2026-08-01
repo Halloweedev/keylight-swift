@@ -2,6 +2,19 @@
 
 All notable changes to Keylight are documented in this file.
 
+## [0.8.5] - 2026-08-01 — the SDK now says which SDK it is
+
+Activate and validate send one extra field, `sdk`. Nothing to change in your
+app, and no API surface moved.
+
+### Added
+
+- **`sdk` is sent alongside `platform`.** `platform` reports the operating
+  system (`macOS`, `iOS`, `watchOS`, `tvOS`, `visionOS`) and was previously the
+  only way to tell which Keylight SDK a device ran — it worked for Swift only
+  because the Apple platform names happen to be unique. That was a coincidence,
+  not a contract, so the SDK now states its identity outright.
+
 ## [0.8.4] - 2026-07-29 — a revocation the client can't parse is no longer ignored
 
 A single reliability fix, on the path that matters most: a license you revoke

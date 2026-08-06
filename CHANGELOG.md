@@ -4,7 +4,7 @@ All notable changes to Keylight are documented in this file.
 
 ## [Unreleased]
 
-Activate, validate, and the keyless beacon send up to three extra optional
+Activate, validate, and the keyless beacon send up to five extra optional
 fields describing the device. Nothing to change in your app, and no API
 surface moved.
 
@@ -18,8 +18,14 @@ surface moved.
 - **`device_class` distinguishes iPhone from iPad, on iOS only.** iOS is the
   one platform where the OS name alone can't tell the hardware apart. On every
   other platform the field is omitted entirely.
+- **`cpu_cores` and `memory` report the rough hardware shape as a bucket**, not
+  a raw value — `"1-2"`, `"3-4"`, `"5-8"`, `"9-16"`, `"17+"` for cores, and
+  `"<4GB"`, `"4-8GB"`, `"8-16GB"`, `"16-32GB"`, `"32-64GB"`, `"64GB+"` for
+  memory. The SDK reads `ProcessInfo` locally and sends only the label: the
+  exact core count and RAM size never leave the device, so nothing here can be
+  used to fingerprint one of your customers.
 
-All three fields are optional on the wire — apps built against older SDK
+All five fields are optional on the wire — apps built against older SDK
 versions keep working unchanged.
 
 ## [0.8.5] - 2026-08-01 — the SDK now says which SDK it is

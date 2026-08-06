@@ -2,6 +2,26 @@
 
 All notable changes to Keylight are documented in this file.
 
+## [Unreleased]
+
+Activate, validate, and the keyless beacon send up to three extra optional
+fields describing the device. Nothing to change in your app, and no API
+surface moved.
+
+### Added
+
+- **`os_version` is sent alongside `platform`.** The numeric dotted OS version
+  (`"15.5"`, `"15.5.1"`) from `ProcessInfo`, so the platform breakdown can
+  distinguish OS releases, not just OS families.
+- **`arch` reports the CPU architecture** the SDK was built for — `arm64` or
+  `x86_64`; anything else is omitted rather than guessed.
+- **`device_class` distinguishes iPhone from iPad, on iOS only.** iOS is the
+  one platform where the OS name alone can't tell the hardware apart. On every
+  other platform the field is omitted entirely.
+
+All three fields are optional on the wire — apps built against older SDK
+versions keep working unchanged.
+
 ## [0.8.5] - 2026-08-01 — the SDK now says which SDK it is
 
 Activate and validate send one extra field, `sdk`. Nothing to change in your

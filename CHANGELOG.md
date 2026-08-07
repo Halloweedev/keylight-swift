@@ -2,7 +2,7 @@
 
 All notable changes to Keylight are documented in this file.
 
-## [Unreleased]
+## [0.8.6] - 2026-08-07
 
 Activate, validate, and the keyless beacon send up to five extra optional
 fields describing the device. Nothing to change in your app, and no API

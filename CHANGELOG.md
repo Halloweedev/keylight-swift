@@ -2,6 +2,19 @@
 
 All notable changes to Keylight are documented in this file.
 
+## [0.9.0] - 2026-08-11
+
+### Added
+- `LicenseManager.refreshAfterUpgrade(timeout:pollInterval:)` — call it when the
+  customer returns from completing an upgrade so new entitlements unlock in the
+  running app within seconds, without waiting for the normal refresh cadence. It
+  polls briefly to cover payment-webhook lag and stops as soon as the tier changes.
+
+### Changed
+- Integration guide now documents wiring `activeRevalidate()` to scene-phase
+  `.active` so a revoked or expired license is caught the moment the app is
+  brought forward.
+
 ## [0.8.6] - 2026-08-07
 
 Activate, validate, and the keyless beacon send up to five extra optional

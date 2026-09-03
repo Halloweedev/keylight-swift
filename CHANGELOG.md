@@ -2,6 +2,46 @@
 
 All notable changes to Keylight are documented in this file.
 
+## [0.10.0] - 2026-09-04 — a keyless device no longer goes quiet while your app runs
+
+One behavior change, on by default, with nothing to do in your app.
+
+### Added
+
+- **`LicenseManager` now re-reports keyless devices on a heartbeat.** The
+  anonymous beacon that tells your dashboard a trial or free-tier device is
+  alive used to fire only from a state transition, which for keyless states
+  means only `checkOnLaunch()`. That is once per *process launch* — so an app
+  that stays open (a menu-bar app, anything a customer leaves running for days)
+  reported itself once and then went silent for as long as it ran. In the
+  dashboard those devices show a **"last seen" frozen at "first seen"**, and an
+  app version frozen at whatever shipped the day they installed.
+
+  The manager now keeps a timer while the device is keyless. It stops on
+  `.licensed`/`.limited` — a paid device reports liveness through `validate()`
+  instead — and resumes on its own if the license lapses.
+
+  Default cadence is 6 hours, and the beacon keeps its 24h debounce, so a
+  resident app sends **at most one extra request per day**. Nothing on the wire
+  changed.
+
+  Opt out, or pick your own cadence, at construction:
+
+  ```swift
+  // Default — no code change needed.
+  let manager = LicenseManager(provider: provider)
+
+  // Or drive the beacon yourself.
+  let manager = LicenseManager(provider: provider, keylessHeartbeatInterval: nil)
+  ```
+
+  `LicenseManager.defaultKeylessHeartbeatInterval` is the 6-hour default, should
+  you want to reference it.
+
+### Changed
+
+- `KeylightProvider.sdkVersion` is now `"0.10.0"`.
+
 ## [0.9.0] - 2026-08-11
 
 ### Added

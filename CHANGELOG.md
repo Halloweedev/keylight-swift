@@ -2,6 +2,48 @@
 
 All notable changes to Keylight are documented in this file.
 
+## [0.11.0] - 2026-09-05 — your dashboard trial length now reaches the app
+
+One behavior change, and nothing to do in your app unless you want it.
+
+### Added
+
+- **Trial length and the free tier are settings the server owns.** Until now the
+  value you passed to `KeylightConfiguration` was the only one that ever
+  applied — you could set a trial length in the dashboard and nothing happened
+  to your app. The SDK now resolves **server value → your configured value →
+  0**, via `effectiveTrialDurationDays()` and `effectiveFreeTierEnabled()`.
+- **Your configured value is still there, and still matters.** It is the *seed*:
+  what a brand-new install uses before it has ever reached the server. Keep
+  setting it — removing it would make first launch depend on the network.
+- **No new network calls at launch.** The settings ride on `validate` (every
+  licensed install) and the keyless beacon (every unlicensed one), both calls
+  the SDK already makes. `fetchConfig()` is available if you want an explicit
+  refresh — from a settings pane, say — but nothing calls it for you.
+- **`sdk_trial_duration_days`** on activate and validate: the length your build
+  was compiled with, so a 30-day build running against a 14-day dashboard
+  setting shows up as a mismatch instead of a week of support tickets.
+
+### Fixed
+
+- **A trial enabled later now works.** The trial clock is stamped on first
+  launch even when no trial is on offer yet, so if you turn trials on in the
+  dashboard afterwards, existing installs have a start date to measure from.
+  The stamp grants nothing by itself — status still reports no trial until a
+  duration arrives.
+- **Turning trials off in the dashboard sticks.** A server value of `0` means
+  "trials off" and survives a relaunch, rather than being mistaken for "no
+  setting" and falling back to your compiled-in value.
+- **An old trial is not restarted.** Enabling a trial 60 days after an install
+  does not hand that install a fresh window, so it cannot be farmed by
+  reinstalling.
+
+### Notes
+
+- Nothing changes until you set a trial length in the dashboard. Apps whose
+  tenant has never touched the setting keep using their compiled-in value
+  exactly as before.
+
 ## [0.10.0] - 2026-09-04 — a keyless device no longer goes quiet while your app runs
 
 One behavior change, on by default, with nothing to do in your app.

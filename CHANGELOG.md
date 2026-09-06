@@ -2,6 +2,41 @@
 
 All notable changes to Keylight are documented in this file.
 
+## [0.12.0] - 2026-09-06 — verify that your settings really came from your dashboard
+
+One addition, off by default, and nothing to do in your app unless you want it.
+
+### Added
+
+- **`requireSignedConfig` — Ed25519 verification of server-owned product
+  settings.** The Keylight worker has signed the trial length and free-tier
+  flag on every route that delivers them since 2026-09-06. Until now nothing in
+  this SDK checked those signatures. `ConfigVerifier` now does, over the payload
+  format shared by every Keylight SDK.
+
+  **It is off by default, and should stay off unless you know your product is
+  signed.** The worker signs a product's settings only once that product has a
+  trial length configured in the dashboard; every other product is served
+  unsigned. Turning this on for one of those would reject legitimate responses
+  and pin the install to the seed you compiled in.
+
+  When it is on, settings that do not verify are **never cached** — the SDK
+  keeps your seed value rather than trusting what the server claimed. The check
+  lives at the single point where settings are merged, so no route can be used
+  to write settings around it: `/config`, `validate`, and the keyless beacon all
+  pass through it.
+
+  Verification is rooted in the `trustedPublicKeys` you compile into your app.
+  The SDK does not fetch a keyset at runtime, on purpose: keys fetched over the
+  same connection that serves the settings would let anyone able to forge one
+  forge the other. The trade-off is that if you rotate to a new key id, builds
+  already in the wild keep their last known settings until you ship an update —
+  they freeze, they do not break.
+
+  What this protects is the network path, not the device. Someone editing your
+  app's binary can still do as they like; this stops settings being altered in
+  transit.
+
 ## [0.11.1] - 2026-09-06 — the dashboard trial length actually reaches your app
 
 A bug-fix release. 0.11.0 shipped the server-owned trial length, but

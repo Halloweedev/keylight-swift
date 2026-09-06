@@ -2,6 +2,75 @@
 
 All notable changes to Keylight are documented in this file.
 
+## [0.11.1] - 2026-09-06 — the dashboard trial length actually reaches your app
+
+A bug-fix release. 0.11.0 shipped the server-owned trial length, but
+`LicenseManager` could not reach it — upgrade if you are on 0.11.0.
+
+### Fixed
+
+- **`fetchConfig()`, `effectiveTrialDurationDays()` and
+  `effectiveFreeTierEnabled()` are reachable from `LicenseManager`.** They
+  existed on the provider and were fully tested there, but `LicenseManager`
+  never forwarded them, so `manager.fetchConfig()` did not compile and the
+  server-owned values 0.11.0 announced were unreachable through the type
+  almost every app actually holds. The forwarding methods are now present and
+  tested against the manager, not the provider.
+- **A server value of `0` survives the forward as `0`.** Not re-read as
+  "unset, use the compiled-in seed" — "trials off" is the setting most likely
+  to be lost to a one-line delegation, and it is now pinned by a test.
+
+## [0.11.0] - 2026-09-05 — your dashboard trial length now reaches the app
+
+One behavior change, and nothing to do in your app unless you want it.
+
+### Added
+
+- **Trial length and the free tier are settings the server owns.** Until now the
+  value you passed to `KeylightConfiguration` was the only one that ever
+  applied — you could set a trial length in the dashboard and nothing happened
+  to your app. The SDK now resolves **server value → your configured value →
+  0**, via `effectiveTrialDurationDays()` and `effectiveFreeTierEnabled()`.
+- **Your configured value is still there, and still matters.** It is the *seed*:
+  what a brand-new install uses before it has ever reached the server. Keep
+  setting it — removing it would make first launch depend on the network.
+- **No new network calls at launch.** The settings ride on `validate` (every
+  licensed install) and the keyless beacon (every unlicensed one), both calls
+  the SDK already makes. `fetchConfig()` is available if you want an explicit
+  refresh — from a settings pane, say — but nothing calls it for you.
+- **`sdk_trial_duration_days`** on activate and validate: the length your build
+  was compiled with, so a 30-day build running against a 14-day dashboard
+  setting shows up as a mismatch instead of a week of support tickets.
+
+### Fixed
+
+- **A trial enabled later now works.** The trial clock is stamped on first
+  launch even when no trial is on offer yet, so if you turn trials on in the
+  dashboard afterwards, existing installs have a start date to measure from.
+  The stamp grants nothing by itself — status still reports no trial until a
+  duration arrives.
+
+  Read the consequence before you switch trials on for a shipped app: the
+  window is measured from that original stamp, not from the day you enabled
+  it. An install older than the length you set gets a trial that has *already
+  expired* — turning on a 14-day trial hands nothing to anyone who installed
+  more than 14 days ago. This is the same property as "an old trial is not
+  restarted" below, seen from the other side, and it is deliberate. If you
+  want existing installs to get a fresh window, set a length that covers
+  their age.
+- **Turning trials off in the dashboard sticks.** A server value of `0` means
+  "trials off" and survives a relaunch, rather than being mistaken for "no
+  setting" and falling back to your compiled-in value.
+- **An old trial is not restarted.** Enabling a trial 60 days after an install
+  does not hand that install a fresh window, so it cannot be farmed by
+  reinstalling.
+
+### Notes
+
+- Nothing changes until you set a trial length in the dashboard. Apps whose
+  tenant has never touched the setting keep using their compiled-in value
+  exactly as before.
+
 ## [0.10.0] - 2026-09-04 — a keyless device no longer goes quiet while your app runs
 
 One behavior change, on by default, with nothing to do in your app.

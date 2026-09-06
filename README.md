@@ -31,7 +31,7 @@ Licensing shouldn't mean bolting a heavyweight, phone-home-or-die SDK onto your 
 - **[Offline validation](https://keylight.dev/offline-license-validation)** — verify entitlement locally with a bundled public key; no network call to launch.
 - **[Device activations](https://keylight.dev/features/device-activations)** — per-key activation limits with customer self-service deactivation.
 - **[Stripe-native](https://keylight.dev/features/stripe-integration)** — payments mint licenses automatically; no webhook glue in your app.
-- **[Free trials](https://keylight.dev/features/trials)** — a fixed-length evaluation managed by the SDK, with clean trial-to-paid.
+- **[Free trials](https://keylight.dev/features/trials)** — evaluation period whose length you set in the dashboard, with clean trial-to-paid. The value you compile in is the seed a brand-new install uses before it first reaches the server.
 - **Feature flags & tiers** — gate features per entitlement; supports a keyless free tier.
 - **[Refund revocation](https://keylight.dev/features/refund-revocation)** — a refund or chargeback revokes the license on the next online re-check.
 - **SwiftUI-ready** — `LicenseManager` is an `ObservableObject`; gate views on `isEntitled`.
@@ -51,7 +51,7 @@ Or in `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/keylight-dev/keylight-swift.git", from: "0.8.4"),
+    .package(url: "https://github.com/keylight-dev/keylight-swift.git", from: "0.11.1"),
 ],
 targets: [
     .target(
@@ -79,7 +79,7 @@ enum Licensing {
         productId: "widget",
         keyPrefix: "ACME",
         trustedPublicKeyBase64: "...",   // your tenant public key
-        trialDurationDays: 14,
+        trialDurationDays: 14,           // seed; the dashboard value wins once known
         branding: .init(
             appName: "Widget",
             purchaseURL: URL(string: "https://acme.example.com/buy")!,

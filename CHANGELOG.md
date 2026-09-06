@@ -2,6 +2,24 @@
 
 All notable changes to Keylight are documented in this file.
 
+## [0.11.1] - 2026-09-06 — the dashboard trial length actually reaches your app
+
+A bug-fix release. 0.11.0 shipped the server-owned trial length, but
+`LicenseManager` could not reach it — upgrade if you are on 0.11.0.
+
+### Fixed
+
+- **`fetchConfig()`, `effectiveTrialDurationDays()` and
+  `effectiveFreeTierEnabled()` are reachable from `LicenseManager`.** They
+  existed on the provider and were fully tested there, but `LicenseManager`
+  never forwarded them, so `manager.fetchConfig()` did not compile and the
+  server-owned values 0.11.0 announced were unreachable through the type
+  almost every app actually holds. The forwarding methods are now present and
+  tested against the manager, not the provider.
+- **A server value of `0` survives the forward as `0`.** Not re-read as
+  "unset, use the compiled-in seed" — "trials off" is the setting most likely
+  to be lost to a one-line delegation, and it is now pinned by a test.
+
 ## [0.11.0] - 2026-09-05 — your dashboard trial length now reaches the app
 
 One behavior change, and nothing to do in your app unless you want it.
@@ -31,6 +49,15 @@ One behavior change, and nothing to do in your app unless you want it.
   dashboard afterwards, existing installs have a start date to measure from.
   The stamp grants nothing by itself — status still reports no trial until a
   duration arrives.
+
+  Read the consequence before you switch trials on for a shipped app: the
+  window is measured from that original stamp, not from the day you enabled
+  it. An install older than the length you set gets a trial that has *already
+  expired* — turning on a 14-day trial hands nothing to anyone who installed
+  more than 14 days ago. This is the same property as "an old trial is not
+  restarted" below, seen from the other side, and it is deliberate. If you
+  want existing installs to get a fresh window, set a length that covers
+  their age.
 - **Turning trials off in the dashboard sticks.** A server value of `0` means
   "trials off" and survives a relaunch, rather than being mistaken for "no
   setting" and falling back to your compiled-in value.
